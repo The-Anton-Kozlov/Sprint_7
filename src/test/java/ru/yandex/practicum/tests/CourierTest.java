@@ -31,7 +31,7 @@ public class CourierTest extends BaseTest {
 
     @Test
     @DisplayName("Попытка создать двух одинаковых курьеров")
-    public void DuplicateCourierCreationTest() {
+    public void duplicateCourierCreationTest() {
         courierSteps
                 .createCourier(courier)
                 .statusCode(201);

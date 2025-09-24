@@ -13,19 +13,20 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 public class LoginCourierTest extends BaseTest {
     private CourierSteps courierSteps = new CourierSteps();
     private Courier courier;
+    private int courierId;
 
     @Before
     public void setUp() {
         courier = new Courier();
         courier.setLogin(RandomStringUtils.randomAlphabetic(12));
         courier.setPassword(RandomStringUtils.randomAlphabetic(12));
+        courierSteps.createCourier(courier);
+        courierId = courierSteps.login(courier).extract().body().path("id");
     }
 
     @Test
     @DisplayName("Авторизация курьера")
     public void checkCourierAuthorizationTest() {
-        courierSteps
-                .createCourier(courier);
         courierSteps
                 .login(courier)
                 .statusCode(200)
@@ -47,8 +48,6 @@ public class LoginCourierTest extends BaseTest {
     @Test
     @DisplayName("Авторизация курьера без логина")
     public void loginWithoutLoginTest() {
-        courierSteps
-                .createCourier(courier);
         Courier invalidCourier = new Courier();
         invalidCourier.setPassword(courier.getPassword());
         courierSteps
@@ -60,8 +59,6 @@ public class LoginCourierTest extends BaseTest {
     @Test
     @DisplayName("Авторизация курьера без пароля")
     public void loginWithoutPasswordTest() {
-        courierSteps
-                .createCourier(courier);
         Courier invalidCourier = new Courier();
         invalidCourier.setLogin(courier.getLogin());
         courierSteps
@@ -72,9 +69,8 @@ public class LoginCourierTest extends BaseTest {
 
     @After
     public void tearDown() {
-        Integer id = courierSteps.login(courier).extract().body().path("id");
-        if (id != null && id > 0) {
-            courier.setId(id);
+       if (courierId > 0) {
+            courier.setId(courierId);
             courierSteps.deleteCourier(courier);
         }
 }
